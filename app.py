@@ -6,7 +6,7 @@ from scipy.optimize import minimize
 
 # Function to fetch stock data
 def fetch_stock_data(tickers, period="1y"):
-    data = yf.download(tickers, period=period)['Adj Close']
+    data = yf.download(tickers, period=period)['Close']
     return data
 
 # Portfolio Optimization using Modern Portfolio Theory (MPT)
