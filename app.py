@@ -7,9 +7,9 @@ from scipy.optimize import minimize
 # Load stock list from Excel file
 @st.cache_data
 def load_stocklist(file_path):
-    xls = pd.ExcelFile(file_path)
-    sheet_names = xls.sheet_names
-    return xls, sheet_names
+    df_dict = pd.read_excel(file_path, sheet_name=None)  # Load all sheets into a dictionary
+    sheet_names = list(df_dict.keys())  # Extract sheet names
+    return df_dict, sheet_names  # Return dictionary (serializable) instead of ExcelFile object
 
 # Fetch stock data
 def fetch_stock_data(tickers, period="1y"):
@@ -50,12 +50,12 @@ st.title("📈 Quantitative Stock Selection Model")
 
 # Load stock data
 file_path = "stocklist.xlsx"
-xls, sheet_names = load_stocklist(file_path)
+stock_data_dict, sheet_names = load_stocklist(file_path)
 
 # User selects the sheet
 sheet_selected = st.selectbox("Select Stock List Sheet:", sheet_names)
-stock_df = pd.read_excel(xls, sheet_name=sheet_selected)
-tickers = stock_df.iloc[:, 0].dropna().tolist()
+stock_df = stock_data_dict[sheet_selected]  # Get selected sheet data
+tickers = stock_df.iloc[:, 0].dropna().tolist()  # Extract stock symbols
 
 # User Inputs
 model = st.selectbox("Select a Quantitative Model:", ["Modern Portfolio Theory (MPT)", "Momentum Strategy"])
